@@ -1,19 +1,32 @@
+import { Progress } from "@/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 interface Props {
-  probability: number
+  probability: number;
 }
 
 export default function FakeScoreBar({ probability }: Props) {
-  const color = probability > 50 ? 'bg-red-500' : probability > 25 ? 'bg-yellow-500' : 'bg-green-500'
+  const getColor = (prob: number) => {
+    if (prob > 70) return "bg-red-500";
+    if (prob > 40) return "bg-yellow-500";
+    return "bg-green-500";
+  };
+
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-2">Fake Review Probability</h2>
-      <div className="w-full bg-gray-200 rounded-full h-4">
-        <div
-          className={`h-4 rounded-full ${color} transition-all duration-500`}
-          style={{ width: `${probability}%` }}
-        ></div>
-      </div>
-      <p className="mt-2 text-gray-600">{probability}% chance of fake reviews</p>
-    </div>
-  )
+    <Card>
+      <CardHeader>
+        <CardTitle>Fake Review Probability</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <Progress
+          value={probability}
+          className="h-4"
+          indicatorClassName={getColor(probability)}
+        />
+        <p className="text-sm text-muted-foreground text-right font-medium">
+          {probability}% chance of fake reviews
+        </p>
+      </CardContent>
+    </Card>
+  );
 }

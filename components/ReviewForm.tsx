@@ -1,111 +1,150 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2 } from "lucide-react";
 
-interface FormData {
-  productName: string
-  price: number
-  reviews: string
-}
+const formSchema = z.object({
+  productName: z.string().min(2, {
+    message: "Product name must be at least 2 characters.",
+  }),
+  price: z.number().min(0.01, {
+    message: "Price must be greater than 0.",
+  }),
+  reviews: z.string().min(10, {
+    message: "Reviews must be at least 10 characters.",
+  }),
+});
 
 interface AnalysisResult {
-  pros: string[]
-  cons: string[]
-  fakeReviewProbability: number
-  verdict: string
+  pros: string[];
+  cons: string[];
+  fakeReviewProbability: number;
+  verdict: string;
   alternative?: {
-    productName: string
-    reason: string
-  }
+    productName: string;
+    reason: string;
+  };
 }
 
 interface Props {
-  onAnalysis: (result: AnalysisResult) => void
+  onAnalysis: (result: AnalysisResult) => void;
 }
 
 export default function ReviewForm({ onAnalysis }: Props) {
-  const [formData, setFormData] = useState<FormData>({ productName: '', price: 0, reviews: '' })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!formData.productName.trim()) {
-      setError('Product name is required')
-      return
-    }
-    if (formData.price <= 0) {
-      setError('Price must be greater than 0')
-      return
-    }
-    if (!formData.reviews.trim()) {
-      setError('Reviews are required')
-      return
-    }
-    setError('')
-    setLoading(true)
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      productName: "",
+      price: 0,
+      reviews: "",
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setError("");
+    setLoading(true);
     try {
-      const response = await fetch('/api/analyze-reviews', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      })
-      const data = await response.json()
+      const response = await fetch("/api/analyze-reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+      const data = await response.json();
       if (data.success) {
-        onAnalysis(data.data)
+        onAnalysis(data.data);
       } else {
-        setError(data.error || 'Analysis failed')
+        setError(data.error || "Analysis failed");
       }
     } catch (err) {
-      setError('Network error')
+      setError("Network error");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Product Name</label>
-        <input
-          type="text"
-          value={formData.productName}
-          onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-          required
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        <FormField
+          control={form.control}
+          name="productName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Product Name</FormLabel>
+              <FormControl>
+                <Input placeholder="e.g. Wireless Headphones" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Price</label>
-        <input
-          type="number"
-          value={formData.price}
-          onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-          min="0.01"
-          step="0.01"
-          required
+
+        <FormField
+          control={form.control}
+          name="price"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Price</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  step="0.01"
+                  placeholder="99.99"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700">Reviews</label>
-        <textarea
-          value={formData.reviews}
-          onChange={(e) => setFormData({ ...formData, reviews: e.target.value })}
-          rows={6}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-          placeholder="Paste multiple reviews here, one per line or separated by commas"
-          required
+
+        <FormField
+          control={form.control}
+          name="reviews"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Reviews</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Paste reviews here..."
+                  className="min-h-[150px]"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      {error && <p className="text-red-600">{error}</p>}
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 disabled:opacity-50"
-      >
-        {loading ? 'Analyzing...' : 'Analyze Reviews'}
-      </button>
-    </form>
-  )
+
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {loading ? "Analyzing..." : "Analyze Reviews"}
+        </Button>
+      </form>
+    </Form>
+  );
 }
