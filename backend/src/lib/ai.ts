@@ -9,14 +9,12 @@ export interface AnalysisResult {
   }
 }
 
-// Placeholder AI function - returns mock data for hackathon demo
-// In production, integrate with actual AI service (e.g., OpenAI, Claude)
+// Placeholder AI function - returns mock data for demo
 export async function analyzeReviews(productName: string, price: number, reviews: string): Promise<AnalysisResult> {
   // Simulate AI processing delay
-  await new Promise(resolve => setTimeout(resolve, 2000))
+  await new Promise(resolve => setTimeout(resolve, 500))
 
-  // Mock analysis based on input length and content
-  const reviewCount = reviews.split('\n').length
+  const reviewCount = reviews.split('\n').filter(Boolean).length || 1
   const hasPositive = reviews.toLowerCase().includes('good') || reviews.toLowerCase().includes('great')
   const hasNegative = reviews.toLowerCase().includes('bad') || reviews.toLowerCase().includes('poor')
 

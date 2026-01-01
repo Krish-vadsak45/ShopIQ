@@ -1,5 +1,4 @@
 // AI prompt template for review analysis
-// Used when integrating with actual AI service
 export function getPrompt(productName: string, price: number, reviews: string): string {
   return `
 You are an expert at analyzing e-commerce product reviews to detect fake reviews and extract genuine insights.

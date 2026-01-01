@@ -61,3 +61,13 @@ yarn-error.log*
 
 # typescript
 *.tsbuild
+
+# Ignore node_modules in frontend and backend folders
+/frontend/node_modules
+/backend/node_modules
+
+# Additional recommended ignores
+# Next.js build output for frontend
+/frontend/.next
+/frontend/out
+

@@ -62,7 +62,10 @@ export default function ReviewForm({ onAnalysis }: Props) {
     setError("");
     setLoading(true);
     try {
-      const response = await fetch("/api/analyze-reviews", {
+      const base = process.env.NEXT_PUBLIC_API_URL ?? "";
+      const apiUrl = base ? `${base.replace(/\/$/, "")}/analyze-reviews` : "/api/analyze-reviews";
+
+      const response = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
