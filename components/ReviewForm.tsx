@@ -69,10 +69,7 @@ export default function ReviewForm() {
     setError("");
     setLoading(true);
     try {
-      const base = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
-      const apiUrl = base
-        ? `${base.replace(/\/$/, "")}/analyze-product`
-        : "/analyze-product";
+      const apiUrl = "/analyze-product";
       console.log("API URL:", apiUrl);
       const payload = {
         productLink: values.productLink,

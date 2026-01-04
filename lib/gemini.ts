@@ -56,7 +56,7 @@ import fs from "fs";
 import path from "path";
 
 function ensureLogDir() {
-  const dir = path.join(__dirname, "..", "..", "logs");
+  const dir = path.join(process.cwd(), "logs");
   try {
     fs.mkdirSync(dir, { recursive: true });
   } catch (e) {

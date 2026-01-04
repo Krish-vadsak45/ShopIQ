@@ -1,9 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPrompt = getPrompt;
 // AI prompt template for review analysis
-function getPrompt(productName, price, reviews) {
-    return `
+export function getPrompt(productName: string, price: number, reviews: string): string {
+  return `
 You are an expert at analyzing e-commerce product reviews to detect fake reviews and extract genuine insights.
 
 Product: ${productName}
@@ -39,5 +36,5 @@ Output format:
 }
 
 If no alternative is needed, omit the "alternative" field entirely.
-`;
+`
 }

@@ -4,47 +4,33 @@ Analyze e-commerce product reviews, eliminate fake reviews using AI, and present
 
 ## Getting Started
 
-First, install dependencies in each folder:
+First, install dependencies:
 
 ```bash
-# from project root (run twice)
-cd frontend && npm install && cd ..
-cd backend && npm install && cd ..
+npm install
 ```
 
 Then, run the development server:
 
 ```bash
-cd frontend && npm run dev
+npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Run backend (development):
+## Environment Setup
+
+Copy `.env.example` to `.env.local` and add your Gemini API key:
 
 ```bash
-# from project root
-cd backend && npm run dev
+cp .env.example .env.local
 ```
 
-Run both services for development (two terminals):
+Edit `.env.local` and replace `your_gemini_api_key_here` with your actual Gemini API key.
+
+## Build for Production
 
 ```bash
-# in terminal 1
-cd frontend && npm run dev
-# in terminal 2
-cd backend && npm run dev
-```
-
-Build and start for production:
-
-```bash
-# build
-cd frontend && npm run build && cd ..
-cd backend && npm run build && cd ..
-
-# start
-cd frontend && npm run start && cd ..
-cd backend && npm run start && cd ..
-
+npm run build
+npm run start
 ```
